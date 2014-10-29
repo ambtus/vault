@@ -1,0 +1,8 @@
+- content_for(:title, "Welcome #{@user.name}")
+%p.notices
+  Welcome
+  =@user.name
+%p
+  Please check your email for your login link.
+%p
+  If you don’t receive it, please check your spam folder or contact volcom.

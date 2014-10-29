@@ -1,0 +1,42 @@
+- content_for(:title, "Users")
+%h1 Add a New User
+=form_for User.new do |f|
+  =hidden_field_tag "user[group_ids][]", nil
+  =f.label :name
+  =f.text_field :name
+  %br
+  =f.label :email
+  =f.text_field :email, size: 35
+  %br
+  %label
+    Vault Admin
+    =f.check_box :admin
+  %br
+  -Group.by_name.each do |group|
+    %label
+      =check_box_tag "user[group_ids][]", group.id, group.name == "Everyone" ? true : false
+      =group.name
+      |
+  %br
+  = f.submit "Create user with groups"
+%h1 Active Users
+-User.active.each do |user|
+  %h2
+    =link_to user.name, user
+  %p
+    -if user.admin?
+      ="Vault Admin"
+      %br
+    =user.email
+    %br
+    =user.groups.by_name.map(&:name).to_sentence
+  =button_to "make #{user.name} inactive", user, :class => "errors"
+%h1 Inactive Users
+-User.inactive.each do |user|
+  %h2
+    =link_to user.name, user
+  =button_to "make #{user.name} active", user, :class => "errors"
+
+
+
+

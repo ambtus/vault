@@ -1,0 +1,37 @@
+- content_for(:title, "#{@group.name}")
+%p
+  =form_for Efile.new, :multipart => true do |f|
+    =f.hidden_field :owner_type, :value => "Group"
+    =f.hidden_field :owner_id, :value => @group.id
+    =f.file_field :uploaded_to
+    =f.submit "Upload file to #{@group.name}"
+%h1
+  =@group.name + "'s"
+  Users
+%p
+  =@group.users.map(&:name).sort.to_sentence
+%h1
+  =@group.name + "'s"
+  Files
+%ul
+  -@group.efiles_active.each do |efile|
+    %li
+      =link_to efile.name, efile
+      uploaded on:
+      =efile.updated_at.to_date
+      by:
+      =efile.uploaded_by.name
+      =button_to "delete #{efile.name}",  efile, :class => "errors"
+-unless @group.efiles_deleted.empty?
+  %h1
+    Old Files
+  %p
+    These files are no longer downloadable but the person who deleted it may have a copy.
+  %ul
+    -@group.efiles_deleted.each do |efile|
+      %li
+        =efile.name
+        deleted on:
+        =efile.updated_at.to_date
+        by:
+        =efile.deleted_by.name

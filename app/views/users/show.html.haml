@@ -1,0 +1,81 @@
+- content_for(:title, "#{@user.name}")
+%h1 Upload New Files
+%p
+  =form_for Efile.new, :multipart => true do |f|
+    =f.hidden_field :owner_type, :value => "User"
+    =f.collection_select :owner_id, User.active, :id, :name, include_blank: 'select user...'
+    =f.file_field :uploaded_to
+    =f.submit "Upload file to a User"
+%p
+  =form_for Efile.new, :multipart => true do |f|
+    =f.hidden_field :owner_type, :value => "Group"
+    =f.collection_select :owner_id, Group.by_name, :id, :name, include_blank: 'select group...'
+    =f.file_field :uploaded_to
+    =f.submit "Upload file to a Group"
+%h1
+  =@user.name + "'s"
+  Information
+-if @current_user.admin?
+  =form_for @user do |f|
+    =f.label :name
+    =f.text_field :name
+    %br
+    =f.label :email
+    =f.text_field :email, size: 35
+    %br
+    =f.label :admin?
+    =f.check_box :admin
+    %br
+    = f.submit "Change #{@user.name}'s information"
+  -if @user.suspended
+    =button_to "make #{@user.name} active", @user, :class => "errors"
+  -else
+    =button_to "make #{@user.name} inactive", @user, :class => "errors"
+-else
+  %p
+  to change your name or email address please contact volcom
+%h1
+  =@user.name + "'s"
+  Groups
+%ul
+  -@user.groups.each do |group|
+    %li=link_to group.name, group
+-if @current_user.admin?
+  =form_for @user do |f|
+    =hidden_field_tag "user[group_ids][]", nil
+    -Group.all.each do |g|
+      %label
+        =g.name
+        =check_box_tag "user[group_ids][]", g.id, @user.groups.include?(g)
+    %br
+    = f.submit "Change #{@user.name}'s groups"
+
+-else
+  %p
+  to change your groups please contact volcom
+-unless @user.efiles_active.empty?
+  %h1
+    =@user.name + "'s"
+    Files
+  %ul
+    -@user.efiles_active.each do |efile|
+      %li
+        =link_to efile.name, efile
+        uploaded on:
+        =efile.updated_at.to_date
+        by:
+        =efile.uploaded_by.name
+        =button_to "delete #{efile.name}",  efile, :class => "errors"
+-unless @user.efiles_deleted.empty?
+  %h1
+    Old Files
+  %p
+    These files are no longer downloadable but the person who deleted it may have a copy.
+  %ul
+    -@user.efiles_deleted.each do |efile|
+      %li
+        =efile.name
+        deleted on:
+        =efile.updated_at.to_date
+        by:
+        =efile.deleted_by.name

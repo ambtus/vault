@@ -1,0 +1,19 @@
+/*
+ *= require_tree .
+ *= require_self
+ */
+.errors {
+  color: red;
+}
+.notices {
+  color: green;
+}
+h1 {
+  font-size: 125%;
+  font-style: bold;
+  text-align: center;
+}
+h2 {
+  font-size: 110%;
+  font-style: bold;
+}

@@ -1,0 +1,16 @@
+- content_for(:title, "Confirmation")
+%p
+  The file will be permanently deleted and will be listed as:
+  %br
+  =@efile.name
+  deleted on:
+  =Date.today
+  by:
+  =@current_user.name
+%p
+  =link_to "last chance to download #{@efile.name} before you delete it permanently", @efile
+%p
+  Are you sure you want to delete this file?
+%p
+  =link_to "No", @back
+  =button_to "Yes",  @efile, method: :delete, :class => "errors"

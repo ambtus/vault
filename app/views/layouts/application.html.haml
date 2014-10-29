@@ -1,0 +1,20 @@
+!!!
+%html
+  %head
+    %title="Vault: " + yield(:title)
+    %meta{:content => "text/html; charset=utf-8"}
+    %meta{:name => "viewport", :content=>"width=device-width"}
+    =stylesheet_link_tag 'application'
+  %body
+    -if @current_user
+      %p
+        =button_to "logout #{@current_user.name}", logout_user_path(@current_user), {:class => "errors" }
+        =link_to_unless_current @current_user.name, @current_user
+        -if @current_user.admin?
+          =link_to "Edit Users", users_path
+          =link_to "Edit Groups", groups_path
+    -if flash[:error]
+      %p.errors=flash[:error]
+    -if flash[:notice]
+      %p.notices=flash[:notice]
+    =yield

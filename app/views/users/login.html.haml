@@ -1,0 +1,6 @@
+- content_for(:title, "Login")
+%p
+  =form_tag user_otp_path do
+    =label_tag :email
+    =text_field_tag :email
+    =submit_tag "Submit"

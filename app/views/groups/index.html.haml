@@ -1,0 +1,25 @@
+- content_for(:title, "Groups")
+%h1 Add a New Group
+=form_for Group.new do |f|
+  =hidden_field_tag "group[user_ids][]", nil
+  =f.text_field :name
+  %br
+  -User.active.each do |user|
+    =f.label user.name
+    =check_box_tag "group[user_ids][]", user.id
+  %br
+  = f.submit "Create group with members"
+%h1 Current Groups
+-Group.by_name.each do |group|
+  %h2=link_to group.name, group
+  =form_for group do |f|
+    =hidden_field_tag "group[user_ids][]", nil
+    -User.active.each do |user|
+      =f.label user.name
+      =check_box_tag "group[user_ids][]", user.id, group.users.include?(user)
+    %br
+    = f.submit "Change group members"
+
+  =button_to "delete #{group.name}", group, :class => "errors"
+
+

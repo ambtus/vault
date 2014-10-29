@@ -1,0 +1,55 @@
+- content_for(:title, "Confirmation")
+-if @user.suspended
+  %p
+    =@user.name
+    at
+    =@user.email
+    will be able to log in.
+  =form_for @user do |f|
+    =hidden_field_tag "user[suspended]", nil
+    =hidden_field_tag "user[group_ids][]", nil
+    |
+    -Group.by_name.each do |group|
+      %label
+        =check_box_tag "user[group_ids][]", group.id, group.name == "Everyone" ? true : false
+        =group.name
+        |
+    %br
+    = f.submit "Activate #{@user.name} and add to groups"
+  %p
+    =link_to "Back", @back
+-else
+  %p
+    =@user.name
+    at
+    =@user.email
+    will no longer be able to log in.
+  -unless @user.efiles_uploaded.empty?
+    They will still be listed as having uploaded some files.
+  -unless @user.efiles_deleted.empty?
+    They will still be listed as having deleted some files.
+  -unless @user.groups.empty?
+    %p
+      =@user.name
+      will be removed from the following groups:
+      =@user.groups.map(&:name).to_sentence
+  -if @user.efiles_active.empty?
+    %p
+      =@user.name
+      has no active files.
+  -else
+    %p
+      The following files will be permanently deleted:
+      %br
+      =@user.efiles_active.map(&:name).to_sentence
+      %br
+      Meta-information about the file(s) will be stored in the database as:
+      deleted on:
+      =Date.today
+      by:
+      =@current_user.name
+  %p
+    Are you sure you want to inactivate this user?
+  %p
+    =link_to "No", @back
+    =button_to "Yes",  @user, method: :delete, :class => "errors"
